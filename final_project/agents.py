@@ -1,11 +1,5 @@
 """
-Job Referral Network Inequality Model — Agent Definitions
-=========================================================
-ABM exploring how network homophily interacts with job referral dynamics
-to produce employment disparities between high-status and low-status groups.
-
 EMERGENCE SOURCE
-----------------
 Emergence comes from three interacting agent-level mechanisms:
 
 1. ACTIVE PAIRWISE INTERACTION: Every step, each agent contacts a random
@@ -29,11 +23,9 @@ derivable from the parameters analytically. It emerges from who happens to
 interact with whom in early steps, whether a low-status agent forms a strong
 tie with an employed high-status agent before the high-status cluster closes
 in on itself, and whether job loss severs key bridging ties at critical moments.
-This is true even when both groups start from the same employment level —
+This is true even when both groups start from the same employment level, so
 homophily alone generates the gap from identical initial conditions.
 
-Authors: Yi Wang
-Course:  MACS 40550 Agent-Based Modeling
 """
 
 import mesa
@@ -51,8 +43,7 @@ class WorkerAgent(mesa.Agent):
          ties atrophy due to disuse.
       4. If employed, may lose the job with probability = model.job_loss_prob.
 
-    Attributes
-    ----------
+    Parameters:
     node_id : int
         The graph node this agent occupies (used for all network operations).
     group : str
@@ -77,8 +68,7 @@ class WorkerAgent(mesa.Agent):
         self.referrals_given         = 0
         self.referral_offers_received = 0
 
-    # ── Core pairwise interaction ──────────────────────────────────────────
-
+    # Core pairwise interaction 
     def interact_with_neighbor(self, neighbor):
         """
         Pairwise interaction between self and a chosen neighbor.
@@ -97,7 +87,6 @@ class WorkerAgent(mesa.Agent):
             improving future referral probability if either becomes employed.
 
         Parameters
-        ----------
         neighbor : WorkerAgent
         """
         edge_data    = self.model.G.get_edge_data(self.node_id, neighbor.node_id)
@@ -210,8 +199,7 @@ class WorkerAgent(mesa.Agent):
             else:
                 self.model.G[self.node_id][nb_id]["weight"] = new_weight
 
-    # ── Agent step ────────────────────────────────────────────────────────
-
+    # Agent step
     def step(self):
         """
         One agent time step with four sequential actions:
@@ -238,7 +226,7 @@ class WorkerAgent(mesa.Agent):
             self.steps_unemployed += 1
             self.decay_weak_ties()
 
-        # 4. Job loss — steps_unemployed resets to 0: a fresh unemployment spell begins
+        # 4. Job loss so steps_unemployed resets to 0: a fresh unemployment spell begins
         if self.employed and self.random.random() < self.model.job_loss_prob:
             self.employed         = False
             self.steps_unemployed = 0

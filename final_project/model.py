@@ -1,18 +1,13 @@
 """
-Job Referral Network Inequality Model — Model Definition
-=========================================================
 Two groups of workers are embedded in a homophilic social network.
 Each step, agents interact pairwise: employed agents refer unemployed
 neighbors, tie strength co-evolves with interaction history, and
 long-term unemployment causes network atrophy.
 
-The macro outcome — a persistent employment gap between high-status and
-low-status groups — emerges from local referral dynamics even when both
+The macro outcome is that a persistent employment gap between high-status and
+low-status groups emerges from local referral dynamics even when both
 groups start from equal employment levels, demonstrating true emergence
 rather than initial-condition inheritance.
-
-Authors: Yi Wang
-Course:  MACS 40550 Agent-Based Modeling
 """
 
 import networkx as nx
@@ -34,7 +29,6 @@ class JobReferralModel(mesa.Model):
     formation and unemployment-driven tie atrophy.
 
     Parameters
-    ----------
     n_agents : int
         Total number of agents.
     homophily : float [0, 1]
@@ -152,7 +146,7 @@ class JobReferralModel(mesa.Model):
         self.running = True
         self.datacollector.collect(self)
 
-    # ── Network construction ───────────────────────────────────────────────
+    # Network construction 
 
     def _build_network(self):
         """
@@ -197,7 +191,7 @@ class JobReferralModel(mesa.Model):
                     if not self.G.has_edge(node, target):
                         self.G.add_edge(node, target, weight=0.2)
 
-    # ── Agent creation ─────────────────────────────────────────────────────
+    # Agent creation
 
     def _create_agents(self):
         """
@@ -214,7 +208,7 @@ class JobReferralModel(mesa.Model):
                 agent.employed = self.random.random() < self.initial_employed_pct_low
             self.grid.place_agent(agent, node_id)
 
-    # ── Model step ────────────────────────────────────────────────────────
+    # Model step
 
     def step(self):
         """

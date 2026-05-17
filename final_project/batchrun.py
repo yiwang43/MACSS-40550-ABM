@@ -1,10 +1,8 @@
 """
 batchrun.py
-Sweeps homophily and weak_tie_prob across 5 replications × 60 steps.
+Sweeps homophily and weak_tie_prob across 5 replications x 60 steps.
 Also includes a robustness run where both groups start at equal employment,
 proving the gap emerges from network dynamics rather than initial conditions.
-Run with:   python batchrun.py
-Outputs:    batch_results.csv + four publication-ready figures
 """
 
 import pandas as pd
@@ -29,7 +27,7 @@ def filter_params(df, tol=1e-9, **kwargs):
     return df[mask]
 
 
-# ── Main parameter sweep ──────────────────────────────────────────────────
+# Main parameter sweep
 params = {
     "n_agents":                 80,
     "homophily":                [0.2, 0.4, 0.6, 0.8, 1.0],
@@ -67,7 +65,7 @@ df.to_csv("batch_results.csv", index=False)
 print(f"Saved {len(df)} rows to batch_results.csv")
 
 
-# ── Robustness sweep: equal initial employment ────────────────────────────
+# Robustness sweep: equal initial employment
 # Both groups start at 30% employment. If the gap still emerges, it is driven
 # by the network mechanism, not the initial condition.
 params_equal = {**params,
@@ -90,7 +88,7 @@ df_eq.to_csv("batch_results_equal_start.csv", index=False)
 print(f"Saved {len(df_eq)} rows to batch_results_equal_start.csv")
 
 
-# ── Figure 1: Employment gap heatmap at final step ────────────────────────
+# Figure 1: Employment gap heatmap at final step
 final = df[df["Step"] == N_STEPS].copy()
 pivot = (final
          .groupby(["homophily", "weak_tie_prob"])["Employment_Gap"]
@@ -107,10 +105,9 @@ ax.set_ylabel("Homophily")
 plt.tight_layout()
 plt.savefig("fig1_gap_heatmap.png", dpi=150)
 plt.close()
-print("Saved fig1_gap_heatmap.png")
 
 
-# ── Figure 2: Employment dynamics under four extreme conditions ───────────
+# Figure 2: Employment dynamics under four extreme conditions
 conditions = {
     "High homophily, no weak ties":  (1.0, 0.0),
     "High homophily, weak ties":     (1.0, 0.20),
@@ -145,12 +142,10 @@ for idx, (label, (hom, wtp)) in enumerate(conditions.items()):
 plt.suptitle("Employment Dynamics: Extreme Conditions\n(averaged over 5 replications)",
              fontsize=12)
 plt.tight_layout(rect=[0, 0, 1, 0.95])
-plt.savefig("fig2_timeseries.png", dpi=150, bbox_inches="tight")
 plt.close()
-print("Saved fig2_timeseries.png")
 
 
-# ── Figure 3: Network co-evolution — cross-group ties over time ───────────
+# Figure 3: Network co-evolution cross-group ties over time
 fig, ax = plt.subplots(figsize=(8, 5))
 
 line_styles = {
@@ -172,10 +167,9 @@ ax.legend(fontsize=9)
 plt.tight_layout()
 plt.savefig("fig3_network_coevolution.png", dpi=150)
 plt.close()
-print("Saved fig3_network_coevolution.png")
 
 
-# ── Figure 4: Robustness check — gap emerges from equal initial conditions ─
+# Figure 4: Robustness check gap emerges from equal initial conditions
 fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
 
 for ax, (data, title) in zip(axes, [
@@ -196,14 +190,4 @@ plt.suptitle("Robustness Check: Does the Gap Emerge from Network Dynamics?\n"
              "(gap persists even from equal starting point → structural, not initial-condition artifact)",
              fontsize=10)
 plt.tight_layout()
-plt.savefig("fig4_robustness_equal_start.png", dpi=150)
 plt.close()
-print("Saved fig4_robustness_equal_start.png")
-
-print("\nDone. Files produced:")
-print("  batch_results.csv              — canonical sweep (low-status starts at 0%)")
-print("  batch_results_equal_start.csv  — robustness sweep (equal initial employment)")
-print("  fig1_gap_heatmap.png           — employment gap heatmap (for paper)")
-print("  fig2_timeseries.png            — dynamics under extreme conditions (for paper)")
-print("  fig3_network_coevolution.png   — network co-evolution over time (for paper)")
-print("  fig4_robustness_equal_start.png — emergence proof from equal initial conditions")
